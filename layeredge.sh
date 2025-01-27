@@ -103,6 +103,7 @@ fi
     return
     fi
 
+    cd LayerEdge
     # 让用户输入代理地址
     echo "请输入代理地址（格式如 http://代理账号:代理密码@127.0.0.1:8080），每次输入一个，直接按回车结束输入："
     > proxy.txt  # 清空或创建 proxy.txt 文件
@@ -146,6 +147,7 @@ fi
     done
     fi
 
+    cd ..
     # 进入目录
     echo "进入项目目录..."
     cd LayerEdge || {
