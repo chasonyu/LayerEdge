@@ -94,7 +94,7 @@ if [ -d "LayerEdge" ]; then
 fi
 
     # 拉取仓库
-    if git clone https://github.com/sdohuajia/LayerEdge.git; then
+    if git clone https://github.com/chasonyu/LayerEdge.git; then
     echo "仓库拉取成功！"
     else
     echo "仓库拉取失败，请检查网络连接或仓库地址。"
