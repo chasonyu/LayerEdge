@@ -90,15 +90,11 @@ function deploy_layeredge_node() {
     echo "请输入代理地址（格式如 http://代理账号:代理密码@127.0.0.1:8080），每次输入一个，直接按回车结束输入："
     > proxy.txt  # 清空或创建 proxy.txt 文件
     while true; do
-        read -p "代理地址（回车结束）：" proxy
-        if [ -z "$proxy" ]; then
-            break  # 如果用户直接按回车，结束输入
-        fi
-        if [[ "$proxy" =~ ^http://.+@[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+:[0-9]+$ ]]; then
-            echo "$proxy" >> proxy.txt  # 将代理地址写入 proxy.txt
-        else
-            echo "代理地址格式不正确，请重新输入！"
-        fi
+    read -p "代理地址（回车结束）：" proxy
+    if [ -z "$proxy" ]; then
+        break  # 如果用户直接按回车，结束输入
+    fi
+    echo "$proxy" >> proxy.txt  # 将代理地址写入 proxy.txt
     done
 
     # 检查 wallets.txt 是否存在，并提示是否覆盖
@@ -116,25 +112,21 @@ function deploy_layeredge_node() {
 
     # 输入钱包信息（如果需要）
     if [ ! -f "wallets.txt" ] || [[ "$overwrite" =~ ^[Yy]$ ]]; then
-        > wallets.txt  # 创建或清空文件
-        echo "请输入钱包地址和私钥，格式为：钱包地址,私钥"
-        echo "每次输入一个钱包，直接按回车结束输入："
-        while true; do
-            read -p "钱包地址,私钥（回车结束）：" wallet
-            if [ -z "$wallet" ]; then
-                if [ -s "wallets.txt" ]; then
-                    break  # 文件不为空，允许结束
-                else
-                    echo "至少需要输入一个有效的钱包地址和私钥！"
-                    continue
-                fi
-            fi
-            if [[ "$wallet" =~ ^0x[0-9a-fA-F]{40},.+$ ]]; then
-                echo "$wallet" >> wallets.txt
+    > wallets.txt  # 创建或清空文件
+    echo "请输入钱包地址和私钥，推荐格式为：钱包地址,私钥"
+    echo "每次输入一个钱包，直接按回车结束输入："
+    while true; do
+        read -p "钱包地址,私钥（回车结束）：" wallet
+        if [ -z "$wallet" ]; then
+            if [ -s "wallets.txt" ]; then
+                break  # 文件不为空，允许结束
             else
-                echo "钱包地址或私钥格式不正确，请重新输入！"
+                echo "至少需要输入一个有效的钱包地址和私钥！"
+                continue
             fi
-        done
+        fi
+        echo "$wallet" >> wallets.txt  # 将钱包信息写入 wallets.txt
+    done
     fi
 
     # 进入目录
