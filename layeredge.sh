@@ -110,26 +110,40 @@ function deploy_layeredge_node() {
         fi
     done
 
-    # 检查 wallets.txt 是否存在，如果不存在则创建并让用户输入钱包
-    if [ ! -f "wallets.txt" ]; then
-        echo "未找到 wallets.txt 文件，正在创建..."
-        > wallets.txt  # 创建空文件
+    # 检查 wallets.txt 是否存在，并提示是否覆盖
+    echo "检查钱包配置文件..."
+    overwrite="no"
+    if [ -f "wallets.txt" ]; then
+        read -p "wallets.txt 已存在，是否要重新输入钱包信息？(y/n) " overwrite
+        if [[ "$overwrite" =~ ^[Yy]$ ]]; then
+            rm -f wallets.txt
+            echo "已清除旧的钱包信息，请重新输入。"
+        else
+            echo "使用现有的 wallets.txt 文件。"
+        fi
+    fi
 
+    # 输入钱包信息（如果需要）
+    if [ ! -f "wallets.txt" ] || [[ "$overwrite" =~ ^[Yy]$ ]]; then
+        > wallets.txt  # 创建或清空文件
         echo "请输入钱包地址和私钥，格式为：钱包地址,私钥"
         echo "每次输入一个钱包，直接按回车结束输入："
         while true; do
             read -p "钱包地址,私钥（回车结束）：" wallet
             if [ -z "$wallet" ]; then
-                break  # 如果用户直接按回车，结束输入
+                if [ -s "wallets.txt" ]; then
+                    break  # 文件不为空，允许结束
+                else
+                    echo "至少需要输入一个有效的钱包地址和私钥！"
+                    continue
+                fi
             fi
             if [[ "$wallet" =~ ^0x[0-9a-fA-F]{40},.+$ ]]; then
-                echo "$wallet" >> wallets.txt  # 将钱包信息写入 wallets.txt
+                echo "$wallet" >> wallets.txt
             else
                 echo "钱包地址或私钥格式不正确，请重新输入！"
             fi
         done
-    else
-        echo "已找到 wallets.txt 文件，跳过钱包输入。"
     fi
 
     # 安装依赖
