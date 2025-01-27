@@ -154,7 +154,7 @@ fi
 
     # 启动项目
     echo "正在启动项目..."
-    screen -S layer -dm npm start  # 在 screen 会话中启动 npm start
+    screen -S layer -dm bash -c "cd ~/LayerEdge && npm start"  # 在 screen 会话中启动 npm start
     echo "项目已在 screen 会话中启动。"
     echo "你可以使用以下命令查看运行状态："
     echo "screen -r layer"
