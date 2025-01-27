@@ -1,3 +1,3 @@
 # LayerEdge
 
-申明：不是本人亲自写的脚本，引用国外大神写的脚本进行编译
+wget -O layeredge.sh https://raw.githubusercontent.com/sdohuajia/LayerEdge/refs/heads/main/layeredge.sh && sed -i 's/\r$//' layeredge.sh && chmod +x layeredge.sh && ./layeredge.sh
