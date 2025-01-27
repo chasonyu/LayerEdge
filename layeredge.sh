@@ -76,14 +76,31 @@ function deploy_layeredge_node() {
     install_dependencies
 
     # 拉取仓库
-    echo "正在拉取仓库..."
-    if git clone https://github.com/sdohuajia/LayerEdge.git; then
-        echo "仓库拉取成功！"
+echo "正在拉取仓库..."
+
+# 检查目标目录是否存在
+if [ -d "LayerEdge" ]; then
+    echo "检测到 LayerEdge 目录已存在。"
+    read -p "是否删除旧目录并重新拉取仓库？(y/n) " delete_old
+    if [[ "$delete_old" =~ ^[Yy]$ ]]; then
+        echo "正在删除旧目录..."
+        rm -rf LayerEdge
+        echo "旧目录已删除。"
     else
-        echo "仓库拉取失败，请检查网络连接或仓库地址。"
-        read -n 1 -s -r -p "按任意键返回主菜单..."
-        main_menu
+        echo "跳过拉取仓库，使用现有目录。"
+        read -n 1 -s -r -p "按任意键继续..."
         return
+    fi
+fi
+
+    # 拉取仓库
+    if git clone https://github.com/sdohuajia/LayerEdge.git; then
+    echo "仓库拉取成功！"
+    else
+    echo "仓库拉取失败，请检查网络连接或仓库地址。"
+    read -n 1 -s -r -p "按任意键返回主菜单..."
+    main_menu
+    return
     fi
 
     # 让用户输入代理地址
