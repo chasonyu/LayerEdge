@@ -86,15 +86,6 @@ function deploy_layeredge_node() {
         return
     fi
 
-    # 进入目录
-    echo "进入项目目录..."
-    cd LayerEdge || {
-        echo "进入目录失败，请检查是否成功拉取仓库。"
-        read -n 1 -s -r -p "按任意键返回主菜单..."
-        main_menu
-        return
-    }
-
     # 让用户输入代理地址
     echo "请输入代理地址（格式如 http://代理账号:代理密码@127.0.0.1:8080），每次输入一个，直接按回车结束输入："
     > proxy.txt  # 清空或创建 proxy.txt 文件
@@ -146,16 +137,25 @@ function deploy_layeredge_node() {
         done
     fi
 
+    # 进入目录
+    echo "进入项目目录..."
+    cd LayerEdge || {
+    echo "进入目录失败，请检查是否成功拉取仓库。"
+    read -n 1 -s -r -p "按任意键返回主菜单..."
+    main_menu
+    return
+}
+
     # 安装依赖
     echo "正在使用 npm 安装依赖..."
     if npm install; then
-        echo "依赖安装成功！"
+    echo "依赖安装成功！"
     else
-        echo "依赖安装失败，请检查网络连接或 npm 配置。"
-        read -n 1 -s -r -p "按任意键返回主菜单..."
-        main_menu
-        return
-    fi
+    echo "依赖安装失败，请检查网络连接或 npm 配置。"
+    read -n 1 -s -r -p "按任意键返回主菜单..."
+    main_menu
+    return
+fi
 
     # 提示用户操作完成
     echo "操作完成！代理已保存到 proxy.txt，钱包已保存到 wallets.txt，依赖已安装。"
