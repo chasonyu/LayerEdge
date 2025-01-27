@@ -12,21 +12,69 @@ function main_menu() {
         echo "================================================================"
         echo "退出脚本，请按键盘 ctrl + C 退出即可"
         echo "请选择要执行的操作:"
-        echo "1. 部署 hyperspace 节点"
+        echo "1. 部署 layeredge 节点"
         echo "2. 退出脚本"
         echo "================================================================"
         read -p "请输入选择 (1/2): " choice
 
         case $choice in
-            1)  deploy_hyperspace_node ;;
+            1)  deploy_layeredge_node ;;
             2)  exit ;;
             *)  echo "无效选择，请重新输入！"; sleep 2 ;;
         esac
     done
 }
 
-# 部署 hyperspace 节点
-function deploy_hyperspace_node() {
+# 检测并安装环境依赖
+function install_dependencies() {
+    echo "正在检测系统环境依赖..."
+
+    # 检测并安装 git
+    if ! command -v git &> /dev/null; then
+        echo "未找到 git，正在安装 git..."
+        if command -v apt-get &> /dev/null; then
+            sudo apt-get update && sudo apt-get install -y git
+        elif command -v yum &> /dev/null; then
+            sudo yum install -y git
+        elif command -v brew &> /dev/null; then
+            brew install git
+        else
+            echo "无法自动安装 git，请手动安装 git 后重试。"
+            exit 1
+        fi
+        echo "git 安装完成！"
+    else
+        echo "git 已安装。"
+    fi
+
+    # 检测并安装 node 和 npm
+    if ! command -v node &> /dev/null || ! command -v npm &> /dev/null; then
+        echo "未找到 node 或 npm，正在安装 node 和 npm..."
+        if command -v apt-get &> /dev/null; then
+            curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+        elif command -v yum &> /dev/null; then
+            curl -fsSL https://rpm.nodesource.com/setup_16.x | sudo -E bash -
+            sudo yum install -y nodejs
+        elif command -v brew &> /dev/null; then
+            brew install node
+        else
+            echo "无法自动安装 node 和 npm，请手动安装 node 和 npm 后重试。"
+            exit 1
+        fi
+        echo "node 和 npm 安装完成！"
+    else
+        echo "node 和 npm 已安装。"
+    fi
+
+    echo "环境依赖检测完成！"
+}
+
+# 部署 layeredge 节点
+function deploy_layeredge_node() {
+    # 检测并安装环境依赖
+    install_dependencies
+
     # 拉取仓库
     echo "正在拉取仓库..."
     if git clone https://github.com/sdohuajia/LayerEdge.git; then
@@ -100,7 +148,11 @@ function deploy_hyperspace_node() {
 
     # 启动项目
     echo "正在启动项目..."
-    npm start
+    screen -S layer -dm npm start  # 在 screen 会话中启动 npm start
+    echo "项目已在 screen 会话中启动。"
+    echo "你可以使用以下命令查看运行状态："
+    echo "screen -r layer"
+    echo "如果需要退出 screen 会话而不终止进程，请按 Ctrl + A，然后按 D 键。"
 
     # 提示用户按任意键返回主菜单
     read -n 1 -s -r -p "按任意键返回主菜单..."
