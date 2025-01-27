@@ -277,19 +277,27 @@ class LayerEdgeConnection {
     }
 }
 
-// 辅助函数
+// 辅助函数：读取 wallets.txt
 async function readWallets() {
     try {
-        await fs.access("wallets.json");
+        const data = await fs.readFile("wallets.txt", "utf-8");
+        const wallets = data
+            .split('\n')
+            .map(line => line.trim())
+            .filter(line => line.length > 0)
+            .map(line => {
+                const [address, privateKey] = line.split(',');
+                return { address, privateKey };
+            });
 
-        const data = await fs.readFile("wallets.json", "utf-8");
-        return JSON.parse(data);
-    } catch (err) {
-        if (err.code === 'ENOENT') {
-            logger.info("在 wallets.json 中没有找到钱包");
+        return wallets;
+    } catch (error) {
+        if (error.code === 'ENOENT') {
+            logger.info("在 wallets.txt 中没有找到钱包");
             return [];
         }
-        throw err;
+        logger.error(`读取 wallets.txt 失败：${error.message}`);
+        return [];
     }
 }
 
@@ -302,7 +310,7 @@ async function run() {
     
     if (proxies.length === 0) logger.warn('没有代理', '在没有代理支持的情况下运行');
     if (wallets.length === 0) {
-        logger.error('缺少钱包配置', '使用 "npm run autoref" 创建钱包');
+        logger.error('缺少钱包配置', '请确保 wallets.txt 文件存在且格式正确');
         return;
     }
 
