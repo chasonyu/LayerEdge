@@ -285,7 +285,7 @@ class LayerEdgeConnection {
             "post",
             `https://dashboard.layeredge.io/api/claim-points`,
             { data: databody },
-            retries = 5
+            5
         );
  
         if (response && response.data) {
