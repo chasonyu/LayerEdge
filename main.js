@@ -284,14 +284,15 @@ class LayerEdgeConnection {
         const response = await this.makeRequest(
             "post",
             `https://dashboard.layeredge.io/api/claim-points`,
-            { data: databody }
+            { data: databody },
+            retries = 5
         );
  
         if (response && response.data) {
-            logger.info("Clain Daily Rewards:", response.data, databody);
+            logger.info("Success Clain Daily Rewards:", JSON.stringify(response.data), JSON.stringify(databody));
             return true;
         } else {
-            logger.error("Failed to Clain Daily Rewards:");
+            logger.info("Failed Clain Daily Rewards:", JSON.stringify(response.data), JSON.stringify(databody));
             return false;
         }
     }
@@ -359,8 +360,8 @@ async function run() {
                 logger.progress(address, '重新连接节点', 'processing');
                 await socket.connectNode();
 
-                // logger.progress(address, '领取每日奖励', 'processing');
-                // await socket.clainDailyRewards();
+                logger.progress(address, '领取每日奖励', 'processing');
+                await socket.clainDailyRewards();
 
                 logger.progress(address, '检查节点点数', 'processing');
                 await socket.checkNodePoints();
