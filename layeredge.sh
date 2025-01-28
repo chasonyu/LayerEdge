@@ -86,6 +86,14 @@ if [ -d "LayerEdge" ]; then
         echo "正在删除旧目录..."
         rm -rf LayerEdge
         echo "旧目录已删除。"
+        # 清理旧的 screen 会话
+            if screen -list | grep -q "layer"; then
+                echo "检测到旧的 screen 会话，正在关闭..."
+                screen -S layer -X quit
+                echo "旧的 screen 会话已关闭。"
+            else
+                echo "没有找到旧的 screen 会话。"
+            fi
     else
         echo "跳过拉取仓库，使用现有目录。"
         read -n 1 -s -r -p "按任意键继续..."
