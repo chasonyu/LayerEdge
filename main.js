@@ -288,7 +288,7 @@ class LayerEdgeConnection {
         );
  
         if (response && response.data) {
-            logger.info("Clain Daily Rewards:", JSON.stringify(response.data, null, 2), databody);
+            logger.info("Clain Daily Rewards:", response.data, databody);
             return true;
         } else {
             logger.error("Failed to Clain Daily Rewards:");
