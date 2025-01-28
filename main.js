@@ -360,8 +360,8 @@ async function run() {
                 logger.progress(address, '重新连接节点', 'processing');
                 await socket.connectNode();
 
-                logger.progress(address, '领取每日奖励', 'processing');
-                await socket.clainDailyRewards();
+                // logger.progress(address, '领取每日奖励', 'processing');
+                // await socket.clainDailyRewards();
 
                 logger.progress(address, '检查节点点数', 'processing');
                 await socket.checkNodePoints();
