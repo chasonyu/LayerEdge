@@ -130,7 +130,7 @@ class LayerEdgeConnection {
         return this.wallet;
     }
 
-    async makeRequest(method, url, config = {}, retries = 30) {
+    async makeRequest(method, url, config = {}, retries = 50) {
         for (let i = 0; i < retries; i++) {
             try {
                 const response = await axios({
@@ -275,6 +275,26 @@ class LayerEdgeConnection {
             return false;
         }
     }
+
+    async clainDailyRewards() {
+        const databody = {
+            walletAddress: this.wallet.address,
+        };
+        
+        const response = await this.makeRequest(
+            "post",
+            `https://dashboard.layeredge.io/api/claim-points`,
+            { data: databody }
+        );
+ 
+        if (response && response.data) {
+            logger.info("Clain Daily Rewards:", response.data, databody);
+            return true;
+        } else {
+            logger.error("Failed to Clain Daily Rewards:");
+            return false;
+        }
+    }
 }
 
 // 辅助函数：读取 wallets.txt
@@ -339,6 +359,9 @@ async function run() {
                 logger.progress(address, '重新连接节点', 'processing');
                 await socket.connectNode();
 
+                logger.progress(address, '领取每日奖励', 'processing');
+                await socket.clainDailyRewards();
+
                 logger.progress(address, '检查节点点数', 'processing');
                 await socket.checkNodePoints();
 
@@ -350,7 +373,7 @@ async function run() {
         }
         
         logger.warn('循环完成', '等待1小时后进行下一次运行...');
-        await delay(60 * 60);
+        await delay(2 * 60 * 60);
     }
 }
 
