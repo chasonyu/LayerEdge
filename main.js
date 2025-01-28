@@ -130,7 +130,7 @@ class LayerEdgeConnection {
         return this.wallet;
     }
 
-    async makeRequest(method, url, config = {}, retries = 50) {
+    async makeRequest(method, url, config = {}, retries = 120) {
         for (let i = 0; i < retries; i++) {
             try {
                 const response = await axios({
@@ -373,7 +373,7 @@ async function run() {
         }
         
         logger.warn('循环完成', '等待1小时后进行下一次运行...');
-        await delay(2 * 60 * 60);
+        await delay(4 * 60 * 60);
     }
 }
 
